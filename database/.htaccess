@@ -1,0 +1,5 @@
+# Protect SQL files from direct download
+<FilesMatch "\.sql$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>

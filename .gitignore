@@ -1,0 +1,60 @@
+# Configuration files with sensitive data
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+error.log
+access.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Cache and session files
+cache/
+sessions/
+tmp/
+
+# Uploaded files (if any in future)
+uploads/
+files/
+
+# Backup files
+*.bak
+*.backup
+*.sql.gz
+*.sql.zip
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# Composer (if used in future)
+# /vendor/  # Comentado porque vendor/fpdf.php es necesario
+composer.phar
+composer.lock
+
+# NPM (if used in future)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build files
+dist/
+build/
