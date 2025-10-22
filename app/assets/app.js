@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function cargarFiltros() {
-    fetch('/app/controllers/obtener_filtros.php')
+    fetch('app/controllers/obtener_filtros.php')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -71,7 +71,7 @@ function cargarClientes() {
     const tbody = document.getElementById('tablaClientes');
     tbody.innerHTML = '<tr><td colspan="9" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
     
-    fetch(`/app/controllers/clientes_listar.php?${params}`)
+    fetch(`app/controllers/clientes_listar.php?${params}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -244,7 +244,7 @@ function abrirModalNuevo() {
 }
 
 function editarCliente(id) {
-    fetch(`/app/controllers/clientes_detalle.php?id=${id}`)
+    fetch(`app/controllers/clientes_detalle.php?id=${id}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -289,7 +289,7 @@ function editarCliente(id) {
 function guardarCliente() {
     const formData = new FormData(document.getElementById('formCliente'));
     const id = document.getElementById('cliente_id').value;
-    const url = id ? '/app/controllers/clientes_editar.php' : '/app/controllers/clientes_crear.php';
+    const url = id ? 'app/controllers/clientes_editar.php' : 'app/controllers/clientes_crear.php';
     
     const btn = document.getElementById('btnGuardarCliente');
     btn.disabled = true;
@@ -334,7 +334,7 @@ function eliminarCliente(id) {
     const formData = new FormData();
     formData.append('id', id);
     
-    fetch('/app/controllers/clientes_eliminar.php', {
+    fetch('app/controllers/clientes_eliminar.php', {
         method: 'POST',
         body: formData
     })
@@ -354,7 +354,7 @@ function eliminarCliente(id) {
 }
 
 function verDetalle(id) {
-    fetch(`/app/controllers/clientes_detalle.php?id=${id}`)
+    fetch(`app/controllers/clientes_detalle.php?id=${id}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -435,11 +435,11 @@ function mostrarDetalleModal(cliente) {
 
 function exportarCSV() {
     const params = new URLSearchParams(filtrosActuales);
-    window.location.href = `/app/controllers/export_csv.php?${params}`;
+    window.location.href = `app/controllers/export_csv.php?${params}`;
 }
 
 function exportarPDF(id) {
-    window.open(`/app/controllers/export_pdf.php?id=${id}`, '_blank');
+    window.open(`app/controllers/export_pdf.php?id=${id}`, '_blank');
 }
 
 function actualizarIconosOrden() {

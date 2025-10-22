@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/app/config/config.php';
 require_once __DIR__ . '/app/config/session.php';
 
 $pageTitle = 'Catálogo Maestro de Clientes';

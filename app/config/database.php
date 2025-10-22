@@ -3,7 +3,7 @@
 
 $db_host = "localhost";
 $db_user = "root";
-$db_pass = "";
+$db_pass = "fami123.";
 $db_name = "clientes_db";
 $db_charset = "utf8mb4";
 
@@ -18,5 +18,6 @@ try {
     
     $pdo = new PDO($dsn, $db_user, $db_pass, $options);
 } catch (PDOException $e) {
-    die("Error de conexión a la base de datos: " . $e->getMessage());
+    // No usar die() para permitir que los controladores manejen el error apropiadamente
+    throw new PDOException("Error de conexión a la base de datos: " . $e->getMessage());
 }
