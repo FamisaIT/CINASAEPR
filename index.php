@@ -2,25 +2,24 @@
 require_once __DIR__ . '/app/config/config.php';
 require_once __DIR__ . '/app/config/session.php';
 
-$pageTitle = 'Catálogo Maestro de Clientes';
+$pageTitle = 'CINASA - Gestión de Clientes';
 require_once __DIR__ . '/app/views/header.php';
 ?>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="stats-card">
-            <h3 id="totalClientes">-</h3>
-            <p><i class="fas fa-users"></i> Total de Clientes</p>
-        </div>
-    </div>
-</div>
 
+<!-- Enhanced Filter Section -->
 <div class="filter-section">
-    <h5 class="mb-3"><i class="fas fa-filter"></i> Filtros de Búsqueda</h5>
+    <h5 class="mb-3 flex items-center text-xl">
+        <i class="fas fa-filter text-blue-600"></i>
+        <span class="ml-2">Filtros de Búsqueda</span>
+    </h5>
     <div class="row g-3">
         <div class="col-md-4">
             <label for="buscar" class="form-label">Buscar</label>
-            <input type="text" class="form-control" id="buscar" placeholder="Razón social, RFC o contacto...">
+            <div class="relative">
+                <input type="text" class="form-control pl-10" id="buscar" placeholder="Razón social, RFC o contacto...">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
         </div>
         <div class="col-md-2">
             <label for="filtro_estatus" class="form-label">Estatus</label>
@@ -44,29 +43,35 @@ require_once __DIR__ . '/app/views/header.php';
             </select>
         </div>
         <div class="col-md-1 d-flex align-items-end gap-2">
-            <button class="btn btn-primary w-100" id="btnBuscar" title="Buscar">
-                <i class="fas fa-search"></i>
+            <button class="btn btn-primary w-100 group" id="btnBuscar" title="Buscar">
+                <i class="fas fa-search transition-transform group-hover:scale-125"></i>
             </button>
         </div>
     </div>
-    <div class="row mt-2">
+    <div class="row mt-3">
         <div class="col-12">
-            <button class="btn btn-secondary btn-sm" id="btnLimpiarFiltros">
-                <i class="fas fa-eraser"></i> Limpiar Filtros
+            <button class="btn btn-secondary btn-sm group" id="btnLimpiarFiltros">
+                <i class="fas fa-eraser transition-transform group-hover:rotate-12"></i>
+                <span class="ml-1">Limpiar Filtros</span>
             </button>
         </div>
     </div>
 </div>
 
+<!-- Enhanced Main Card -->
 <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="fas fa-list"></i> Listado de Clientes</span>
-        <div>
-            <button class="btn btn-success btn-sm me-2" id="btnExportarCSV">
-                <i class="fas fa-file-csv"></i> Exportar CSV
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span class="flex items-center">
+            <i class="fas fa-list mr-2"></i> Listado de Clientes
+        </span>
+        <div class="flex gap-2">
+            <button class="btn btn-success btn-sm group" id="btnExportarCSV">
+                <i class="fas fa-file-csv transition-transform group-hover:scale-125"></i>
+                <span class="ml-1">Exportar CSV</span>
             </button>
-            <button class="btn btn-primary btn-sm" id="btnNuevoCliente">
-                <i class="fas fa-plus"></i> Nuevo Cliente
+            <button class="btn btn-primary btn-sm group" id="btnNuevoCliente">
+                <i class="fas fa-plus transition-transform group-hover:rotate-90"></i>
+                <span class="ml-1">Nuevo Cliente</span>
             </button>
         </div>
     </div>
@@ -98,7 +103,7 @@ require_once __DIR__ . '/app/views/header.php';
             </table>
         </div>
     </div>
-    <div class="card-body border-top">
+    <div class="card-body border-top bg-gradient-to-r from-slate-50 to-blue-50">
         <div class="d-flex justify-content-center">
             <div id="paginacion"></div>
         </div>

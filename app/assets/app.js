@@ -72,19 +72,26 @@ function cargarClientes() {
     tbody.innerHTML = '<tr><td colspan="9" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>';
     
     fetch(`app/controllers/clientes_listar.php?${params}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => Promise.reject(err));
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 mostrarClientes(data.data);
                 actualizarPaginacion(data.pagination);
                 actualizarContador(data.pagination.total);
             } else {
-                mostrarError('Error al cargar los clientes');
+                console.error('Error del servidor:', data);
+                mostrarError(data.message || 'Error al cargar los clientes');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            mostrarError('Error de conexión al cargar los clientes');
+            console.error('Error completo:', error);
+            const mensaje = error.message || error.error || 'Error de conexión al cargar los clientes';
+            mostrarError(mensaje);
         });
 }
 
@@ -197,7 +204,10 @@ function actualizarPaginacion(pagination) {
 }
 
 function actualizarContador(total) {
-    document.getElementById('totalClientes').textContent = total;
+    const elemento = document.getElementById('totalClientes');
+    if (elemento) {
+        elemento.textContent = total;
+    }
 }
 
 function cambiarPagina(pagina) {
@@ -371,42 +381,137 @@ function verDetalle(id) {
 
 function mostrarDetalleModal(cliente) {
     const detalleHTML = `
-        <div class="row">
+        <div class="row g-3">
             <div class="col-md-6">
-                <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-building"></i> Datos Fiscales</h6>
-                <p><strong>Razón Social:</strong> ${escapeHtml(cliente.razon_social)}</p>
-                <p><strong>RFC:</strong> ${cliente.rfc}</p>
-                <p><strong>Régimen Fiscal:</strong> ${escapeHtml(cliente.regimen_fiscal || 'N/A')}</p>
-                <p><strong>Estatus:</strong> <span class="badge badge-${cliente.estatus}">${cliente.estatus.toUpperCase()}</span></p>
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3 text-blue-700">
+                            <i class="fas fa-building text-blue-600 me-2"></i>
+                            Datos Fiscales
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Razón Social</span>
+                            <span class="detail-value">${escapeHtml(cliente.razon_social)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">RFC</span>
+                            <span class="detail-value">${cliente.rfc}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Régimen Fiscal</span>
+                            <span class="detail-value">${escapeHtml(cliente.regimen_fiscal || 'N/A')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Estatus</span>
+                            <span class="detail-value"><span class="badge badge-${cliente.estatus}">${cliente.estatus.toUpperCase()}</span></span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-map-marker-alt"></i> Ubicación</h6>
-                <p><strong>Dirección:</strong> ${escapeHtml(cliente.direccion || 'N/A')}</p>
-                <p><strong>País:</strong> ${escapeHtml(cliente.pais)}</p>
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3 text-blue-700">
+                            <i class="fas fa-map-marker-alt text-blue-600 me-2"></i>
+                            Ubicación
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Dirección</span>
+                            <span class="detail-value">${escapeHtml(cliente.direccion || 'N/A')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">País</span>
+                            <span class="detail-value">${escapeHtml(cliente.pais)}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row mt-3">
+        <div class="row g-3 mt-1">
             <div class="col-md-6">
-                <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-address-book"></i> Contacto</h6>
-                <p><strong>Contacto Principal:</strong> ${escapeHtml(cliente.contacto_principal || 'N/A')}</p>
-                <p><strong>Teléfono:</strong> ${escapeHtml(cliente.telefono || 'N/A')}</p>
-                <p><strong>Correo:</strong> ${escapeHtml(cliente.correo || 'N/A')}</p>
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3 text-blue-700">
+                            <i class="fas fa-address-book text-blue-600 me-2"></i>
+                            Contacto
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Contacto Principal</span>
+                            <span class="detail-value">${escapeHtml(cliente.contacto_principal || 'N/A')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Teléfono</span>
+                            <span class="detail-value">${escapeHtml(cliente.telefono || 'N/A')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Correo</span>
+                            <span class="detail-value">${escapeHtml(cliente.correo || 'N/A')}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-credit-card"></i> Condiciones Comerciales</h6>
-                <p><strong>Días de Crédito:</strong> ${cliente.dias_credito} días</p>
-                <p><strong>Límite de Crédito:</strong> $${parseFloat(cliente.limite_credito).toFixed(2)} ${cliente.moneda}</p>
-                <p><strong>Vendedor Asignado:</strong> ${escapeHtml(cliente.vendedor_asignado || 'N/A')}</p>
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3 text-blue-700">
+                            <i class="fas fa-credit-card text-blue-600 me-2"></i>
+                            Condiciones Comerciales
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Días de Crédito</span>
+                            <span class="detail-value">${cliente.dias_credito} días</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Límite de Crédito</span>
+                            <span class="detail-value">$${parseFloat(cliente.limite_credito).toFixed(2)} ${cliente.moneda}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Vendedor Asignado</span>
+                            <span class="detail-value">${escapeHtml(cliente.vendedor_asignado || 'N/A')}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
-    
+
+    // Agregar estilos inline para los detalles
+    const styles = `
+        <style>
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+            }
+            .detail-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+            .detail-label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.3rem;
+            }
+            .detail-value {
+                font-size: 1rem;
+                color: #1e293b;
+                font-weight: 500;
+            }
+        </style>
+    `;
+
     const modalHTML = `
         <div class="modal fade" id="modalDetalle" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle del Cliente</h5>
+                        <h5 class="modal-title"><i class="fas fa-user-circle mr-2"></i>Detalle del Cliente</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -422,12 +527,17 @@ function mostrarDetalleModal(cliente) {
             </div>
         </div>
     `;
-    
+
+    const existingStyle = document.getElementById('detailItemStyles');
+    if (!existingStyle) {
+        document.head.insertAdjacentHTML('beforeend', `<style id="detailItemStyles">${styles.slice(7, -8)}</style>`);
+    }
+
     const existingModal = document.getElementById('modalDetalle');
     if (existingModal) {
         existingModal.remove();
     }
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     const modal = new bootstrap.Modal(document.getElementById('modalDetalle'));
     modal.show();

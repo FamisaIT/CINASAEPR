@@ -2,7 +2,10 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalClienteTitle">Nuevo Cliente</h5>
+                <h5 class="modal-title flex items-center" id="modalClienteTitle">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    <span>Nuevo Cliente</span>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -11,8 +14,11 @@
                     
                     <div class="alert alert-danger d-none" id="erroresCliente"></div>
                     
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="fas fa-building"></i> Datos Fiscales
+                    <h6 class="border-bottom pb-2 mb-3 flex items-center text-blue-700">
+                        <div class="bg-blue-100 p-2 rounded-lg mr-2">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <span>Datos Fiscales</span>
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-8">
@@ -48,8 +54,11 @@
                         </div>
                     </div>
                     
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="fas fa-map-marker-alt"></i> Ubicación
+                    <h6 class="border-bottom pb-2 mb-3 flex items-center text-blue-700">
+                        <div class="bg-blue-100 p-2 rounded-lg mr-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span>Ubicación</span>
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-9">
@@ -62,8 +71,11 @@
                         </div>
                     </div>
                     
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="fas fa-address-book"></i> Datos de Contacto
+                    <h6 class="border-bottom pb-2 mb-3 flex items-center text-blue-700">
+                        <div class="bg-blue-100 p-2 rounded-lg mr-2">
+                            <i class="fas fa-address-book"></i>
+                        </div>
+                        <span>Datos de Contacto</span>
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
@@ -80,8 +92,11 @@
                         </div>
                     </div>
                     
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="fas fa-credit-card"></i> Condiciones Comerciales
+                    <h6 class="border-bottom pb-2 mb-3 flex items-center text-blue-700">
+                        <div class="bg-blue-100 p-2 rounded-lg mr-2">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <span>Condiciones Comerciales</span>
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-3">
@@ -137,8 +152,11 @@
                         </div>
                     </div>
                     
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="fas fa-university"></i> Información Bancaria
+                    <h6 class="border-bottom pb-2 mb-3 flex items-center text-blue-700">
+                        <div class="bg-blue-100 p-2 rounded-lg mr-2">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <span>Información Bancaria</span>
                     </h6>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -153,11 +171,13 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Cancelar
+                <button type="button" class="btn btn-secondary group" data-bs-dismiss="modal">
+                    <i class="fas fa-times transition-transform group-hover:rotate-90"></i>
+                    <span class="ml-1">Cancelar</span>
                 </button>
-                <button type="button" class="btn btn-primary" id="btnGuardarCliente">
-                    <i class="fas fa-save"></i> Guardar Cliente
+                <button type="button" class="btn btn-primary group" id="btnGuardarCliente">
+                    <i class="fas fa-save transition-transform group-hover:scale-125"></i>
+                    <span class="ml-1">Guardar Cliente</span>
                 </button>
             </div>
         </div>

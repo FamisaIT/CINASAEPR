@@ -12,46 +12,48 @@ class ClientesModel {
         $params = [];
         
         if (!empty($filtros['buscar'])) {
-            $where[] = "(razon_social LIKE :buscar OR rfc LIKE :buscar OR contacto_principal LIKE :buscar)";
-            $params[':buscar'] = '%' . $filtros['buscar'] . '%';
+            $buscar = trim($filtros['buscar']);
+            // Limpiar el RFC de caracteres especiales para búsqueda
+            $buscarLimpio = strtoupper(str_replace(['-', ' ', '.'], '', $buscar));
+            
+            $where[] = "(razon_social LIKE ? OR REPLACE(REPLACE(REPLACE(rfc, '-', ''), ' ', ''), '.', '') LIKE ? OR contacto_principal LIKE ?)";
+            $params[] = '%' . $buscar . '%';
+            $params[] = '%' . $buscarLimpio . '%';
+            $params[] = '%' . $buscar . '%';
         }
         
         if (!empty($filtros['estatus'])) {
-            $where[] = "estatus = :estatus";
-            $params[':estatus'] = $filtros['estatus'];
+            $where[] = "estatus = ?";
+            $params[] = $filtros['estatus'];
         }
         
         if (!empty($filtros['vendedor'])) {
-            $where[] = "vendedor_asignado = :vendedor";
-            $params[':vendedor'] = $filtros['vendedor'];
+            $where[] = "vendedor_asignado = ?";
+            $params[] = $filtros['vendedor'];
         }
         
         if (!empty($filtros['pais'])) {
-            $where[] = "pais = :pais";
-            $params[':pais'] = $filtros['pais'];
+            $where[] = "pais = ?";
+            $params[] = $filtros['pais'];
         }
         
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
         
-        $columnasPermitidas = ['razon_social', 'rfc', 'estatus', 'fecha_alta', 'vendedor_asignado', 'limite_credito'];
+        $columnasPermitidas = ['id', 'razon_social', 'rfc', 'estatus', 'fecha_alta', 'vendedor_asignado', 'limite_credito'];
         if (!in_array($orden, $columnasPermitidas)) {
             $orden = 'razon_social';
         }
         
         $direccion = strtoupper($direccion) === 'DESC' ? 'DESC' : 'ASC';
         
-        $sql = "SELECT * FROM clientes {$whereClause} ORDER BY {$orden} {$direccion} LIMIT :limite OFFSET :offset";
+        $sql = "SELECT * FROM clientes {$whereClause} ORDER BY {$orden} {$direccion} LIMIT ? OFFSET ?";
+        
+        $params[] = (int)$limite;
+        $params[] = (int)$offset;
         
         $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        
-        $stmt->bindValue(':limite', (int)$limite, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        
-        $stmt->execute();
         return $stmt->fetchAll();
     }
     
@@ -60,35 +62,37 @@ class ClientesModel {
         $params = [];
         
         if (!empty($filtros['buscar'])) {
-            $where[] = "(razon_social LIKE :buscar OR rfc LIKE :buscar OR contacto_principal LIKE :buscar)";
-            $params[':buscar'] = '%' . $filtros['buscar'] . '%';
+            $buscar = trim($filtros['buscar']);
+            // Limpiar el RFC de caracteres especiales para búsqueda
+            $buscarLimpio = strtoupper(str_replace(['-', ' ', '.'], '', $buscar));
+            
+            $where[] = "(razon_social LIKE ? OR REPLACE(REPLACE(REPLACE(rfc, '-', ''), ' ', ''), '.', '') LIKE ? OR contacto_principal LIKE ?)";
+            $params[] = '%' . $buscar . '%';
+            $params[] = '%' . $buscarLimpio . '%';
+            $params[] = '%' . $buscar . '%';
         }
         
         if (!empty($filtros['estatus'])) {
-            $where[] = "estatus = :estatus";
-            $params[':estatus'] = $filtros['estatus'];
+            $where[] = "estatus = ?";
+            $params[] = $filtros['estatus'];
         }
         
         if (!empty($filtros['vendedor'])) {
-            $where[] = "vendedor_asignado = :vendedor";
-            $params[':vendedor'] = $filtros['vendedor'];
+            $where[] = "vendedor_asignado = ?";
+            $params[] = $filtros['vendedor'];
         }
         
         if (!empty($filtros['pais'])) {
-            $where[] = "pais = :pais";
-            $params[':pais'] = $filtros['pais'];
+            $where[] = "pais = ?";
+            $params[] = $filtros['pais'];
         }
         
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
         
         $sql = "SELECT COUNT(*) as total FROM clientes {$whereClause}";
         $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        
-        $stmt->execute();
         $resultado = $stmt->fetch();
         return $resultado['total'];
     }

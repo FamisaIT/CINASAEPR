@@ -4,38 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'Catálogo de Clientes'; ?></title>
+    <!-- Tailwind CDN - Solo para desarrollo, usar build para producción -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>/app/assets/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>/app/assets/style.css?v=<?php echo time(); ?>">
+    <script>
+        // Suprimir warning de Tailwind CDN en consola
+        if (typeof console !== 'undefined') {
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                if (args[0] && args[0].includes && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+        }
+        
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
     <script>
         // Base URL para las peticiones AJAX - DEBUG
         const BASE_URL = '<?php echo BASE_PATH; ?>';
         console.log('BASE_URL configurado como:', BASE_URL);
     </script>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen">
+    <!-- Modern Navbar with Glass Effect -->
+    <nav class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-lg backdrop-blur-sm sticky top-0 z-50">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?php echo BASE_PATH; ?>/index.php">
-                <i class="fas fa-users-cog"></i> Catálogo Maestro de Clientes
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="<?php echo BASE_PATH; ?>/index.php">
-                            <i class="fas fa-list"></i> Listado
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link">
-                            <i class="fas fa-user"></i> Admin
-                        </span>
-                    </li>
-                </ul>
+            <div class="flex items-center justify-between px-4 py-3">
+                <!-- Logo/Brand -->
+                <a class="flex items-center space-x-3 text-white hover:text-blue-100 transition-all duration-300 group" href="<?php echo BASE_PATH; ?>/index.php">
+                    <div class="bg-white/10 p-2 rounded-lg group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                        <i class="fas fa-industry text-xl"></i>
+                    </div>
+                    <span class="font-bold text-lg tracking-tight">CINASA</span>
+                </a>
+                
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-button" class="lg:hidden text-white hover:text-blue-100 focus:outline-none" type="button">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a href="<?php echo BASE_PATH; ?>/index.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/productos.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'productos.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-boxes"></i>
+                        <span>Productos</span>
+                    </a>
+                    
+                    <!-- Separator -->
+                    <div class="h-8 w-px bg-white/20 mx-2"></div>
+                    
+                    <!-- User Menu -->
+                    <div class="relative group">
+                        <button class="nav-link-custom flex items-center space-x-2">
+                            <div class="bg-white/10 p-1.5 rounded-full">
+                                <i class="fas fa-user text-sm"></i>
+                            </div>
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
+                            <div class="py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                    <i class="fas fa-user-circle mr-2"></i>Mi Perfil
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                    <i class="fas fa-cog mr-2"></i>Configuración
+                                </a>
+                                <div class="border-t border-gray-200 my-1"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="hidden lg:hidden border-t border-white/20">
+                <div class="px-4 py-3 space-y-1">
+                    <a href="<?php echo BASE_PATH; ?>/index.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/productos.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'productos.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-boxes"></i>
+                        <span>Productos</span>
+                    </a>
+                    
+                    <div class="border-t border-white/20 my-2"></div>
+                    
+                    <a href="#" class="mobile-nav-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                    <a href="#" class="mobile-nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </a>
+                    <a href="#" class="mobile-nav-link text-red-300 hover:bg-red-600/20">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
-    <main class="container-fluid py-4">
+    
+    <style>
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-link-custom:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .nav-link-custom.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .mobile-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+    
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+    <main class="container-fluid py-6 px-4">

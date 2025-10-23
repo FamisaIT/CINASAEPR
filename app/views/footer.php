@@ -1,8 +1,9 @@
     </main>
-    <footer class="bg-light text-center py-3 mt-5">
+    <footer class="bg-gradient-to-r from-slate-100 via-blue-50 to-slate-100 text-center py-4 mt-8 shadow-inner">
         <div class="container">
-            <p class="text-muted mb-0">
-                &copy; <?php echo date('Y'); ?> Catálogo Maestro de Clientes - Sistema empresarial
+            <p class="text-slate-600 mb-0 font-medium">
+                <i class="fas fa-copyright text-blue-600"></i>
+                <?php echo date('Y'); ?> Catálogo Maestro de Clientes - Sistema Empresarial
             </p>
         </div>
     </footer>

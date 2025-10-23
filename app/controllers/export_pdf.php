@@ -13,17 +13,14 @@ if (empty($id)) {
 
 try {
     $cliente = $model->obtenerClientePorId($id);
-    
+
     if (!$cliente) {
         die('Cliente no encontrado');
     }
-    
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: inline; filename="cliente_' . $cliente['rfc'] . '.pdf"');
-    
+
     require_once __DIR__ . '/../views/pdf_cliente.php';
     generarPDFCliente($cliente);
-    
+
 } catch (Exception $e) {
     die('Error al generar PDF: ' . $e->getMessage());
 }
