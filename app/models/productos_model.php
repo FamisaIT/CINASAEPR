@@ -124,14 +124,14 @@ class ProductosModel {
             drawing_number, drawing_version, drawing_sheet, ecm_number, 
             material_revision, change_number, nivel_componente, componente_linea, 
             ref_documento, peso, unidad_peso, material, acabado,
-            notas, especificaciones, estatus, usuario_creacion
+            precio_unitario, notas, especificaciones, estatus, usuario_creacion
         ) VALUES (
             :material_code, :descripcion, :unidad_medida, :pais_origen,
             :hts_code, :hts_descripcion, :sistema_calidad, :categoria, :tipo_parte,
             :drawing_number, :drawing_version, :drawing_sheet, :ecm_number,
             :material_revision, :change_number, :nivel_componente, :componente_linea,
             :ref_documento, :peso, :unidad_peso, :material, :acabado,
-            :notas, :especificaciones, :estatus, :usuario_creacion
+            :precio_unitario, :notas, :especificaciones, :estatus, :usuario_creacion
         )";
         
         $stmt = $this->pdo->prepare($sql);
@@ -163,6 +163,7 @@ class ProductosModel {
             unidad_peso = :unidad_peso,
             material = :material,
             acabado = :acabado,
+            precio_unitario = :precio_unitario,
             notas = :notas,
             especificaciones = :especificaciones,
             estatus = :estatus

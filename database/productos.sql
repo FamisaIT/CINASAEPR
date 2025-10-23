@@ -36,10 +36,13 @@ CREATE TABLE IF NOT EXISTS productos (
     material VARCHAR(100) NULL COMMENT 'Material de fabricación',
     acabado VARCHAR(100) NULL COMMENT 'Acabado superficial',
     
+    -- Información de precios y ventas
+    precio_unitario DECIMAL(15,2) DEFAULT 0 COMMENT 'Precio unitario del producto',
+
     -- Notas y observaciones
     notas TEXT NULL COMMENT 'Notas adicionales',
     especificaciones TEXT NULL COMMENT 'Especificaciones técnicas adicionales',
-    
+
     -- Control y auditoría
     estatus ENUM('activo', 'inactivo', 'descontinuado') DEFAULT 'activo',
     fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

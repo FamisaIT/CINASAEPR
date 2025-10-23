@@ -14,10 +14,33 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+/* Fondo con logo transparente */
+body::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 800px;
+    margin-left: -400px;
+    margin-top: -400px;
+    background-image: url('../img/logo.png');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 1;
 }
 
 main {
     flex: 1;
+    position: relative;
+    z-index: 2;
 }
 
 .navbar-brand {
@@ -49,6 +72,15 @@ main {
     padding: 1.25rem 1.5rem;
     position: relative;
     overflow: hidden;
+}
+
+/* Asegurar que el texto sea blanco en todos los headers */
+.card-header h1, .card-header h2, .card-header h3, .card-header h4, .card-header h5, .card-header h6 {
+    color: white !important;
+}
+
+.card-header i {
+    color: inherit !important;
 }
 
 .card-header::before {
@@ -175,6 +207,27 @@ main {
 
 .badge-descontinuado {
     background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+/* Badges para Pedidos */
+.badge-creada {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.badge-en_produccion {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.badge-completada {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.badge-cancelada {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
@@ -686,4 +739,102 @@ footer {
 .btn:hover .fas,
 .btn:hover .far {
     transform: scale(1.2);
+}
+
+/* Dropdown List Styling for Cliente and Producto Selection */
+.position-relative {
+    overflow: visible !important;
+}
+
+.list-group.mt-1 {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-item:hover {
+    background-color: #f1f5f9;
+    padding-left: 1.25rem !important;
+}
+
+.list-group-item:active {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Table cells should not clip dropdown */
+.table tbody td {
+    overflow: visible !important;
+}
+
+/* Table responsive should allow overflow */
+.table-responsive {
+    overflow: visible !important;
+}
+
+/* For crear_pedido form - allow dropdowns to overflow card */
+#formCrearPedido .card {
+    overflow: visible !important;
+}
+
+#formEditarPedido .card {
+    overflow: visible !important;
+}
+
+/* Dropdown containers for products and clients */
+.position-relative {
+    position: relative;
+    overflow: visible !important;
+}
+
+/* Ensure dropdowns overflow properly in table cells */
+#tbody_items td {
+    position: relative;
+    overflow: visible !important;
+}
+
+#tbody_items tr {
+    overflow: visible !important;
+}
+
+/* Dropdown lists styling */
+.producto-lista,
+#cliente_lista {
+    position: absolute;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1050 !important;
+    overflow-y: auto;
+    min-width: 250px;
+    max-height: 400px;
+}
+
+/* Ensure producto-lista is always on top */
+.producto-lista {
+    width: 100%;
+    left: 0;
+    top: 100%;
+}
+
+/* Prevent table rows from creating stacking context that interferes with dropdowns */
+#tablaItems tbody tr {
+    transform: none !important;
+}
+
+#tablaItems tbody tr:hover {
+    transform: none !important;
 }

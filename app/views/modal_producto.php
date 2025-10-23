@@ -25,16 +25,31 @@
                             <input type="text" class="form-control" id="material_code" name="material_code" placeholder="100099089">
                         </div>
                         <div class="col-md-4">
-                            <label for="unidad_medida" class="form-label">Unidad de Medida</label>
-                            <input type="text" class="form-control" id="unidad_medida" name="unidad_medida" placeholder="EA, KG, PZ, etc.">
+                            <label for="unidad_medida_modal" class="form-label">Unidad de Medida</label>
+                            <select class="form-select" id="unidad_medida_modal" name="unidad_medida">
+                                <option value="">Seleccionar...</option>
+                                <option value="EA">EA - Each (Pieza)</option>
+                                <option value="PZ">PZ - Pieza</option>
+                                <option value="KG">KG - Kilogramo</option>
+                                <option value="LB">LB - Libra</option>
+                                <option value="MT">MT - Metro</option>
+                                <option value="M2">M2 - Metro Cuadrado</option>
+                                <option value="M3">M3 - Metro Cúbico</option>
+                                <option value="LT">LT - Litro</option>
+                                <option value="GL">GL - Galón</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="pais_origen" class="form-label">País de Origen</label>
-                            <input type="text" class="form-control" id="pais_origen" name="pais_origen" placeholder="MX, US, CN">
+                            <label for="pais_origen_modal" class="form-label">País de Origen</label>
+                            <input type="text" class="form-control" id="pais_origen_modal" name="pais_origen" placeholder="ej: México, China">
                         </div>
                         <div class="col-md-12">
                             <label for="descripcion" class="form-label">Descripción del Producto</label>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="COVER, ACCESS"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="precio_unitario" class="form-label">Precio Unitario (USD)</label>
+                            <input type="number" step="0.01" class="form-control" id="precio_unitario" name="precio_unitario" placeholder="0.00">
                         </div>
                     </div>
 
@@ -67,12 +82,19 @@
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label for="sistema_calidad" class="form-label">Sistema de Calidad</label>
-                            <input type="text" class="form-control" id="sistema_calidad" name="sistema_calidad" placeholder="J02, ISO9001">
+                            <label for="sistema_calidad_modal" class="form-label">Sistema de Calidad</label>
+                            <select class="form-select" id="sistema_calidad_modal" name="sistema_calidad">
+                                <option value="">Seleccionar...</option>
+                                <option value="J02">J02</option>
+                                <option value="ISO9001">ISO9001</option>
+                                <option value="ISO14001">ISO14001</option>
+                                <option value="IATF16949">IATF16949</option>
+                                <option value="AS9100">AS9100</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="categoria" class="form-label">Categoría</label>
-                            <input type="text" class="form-control" id="categoria" name="categoria" placeholder="Category 2">
+                            <label for="categoria_modal" class="form-label">Categoría</label>
+                            <input type="text" class="form-control" id="categoria_modal" name="categoria" placeholder="ej: Electrónica, Accesorios">
                         </div>
                     </div>
 
@@ -167,8 +189,8 @@
                     </h6>
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
-                            <label for="estatus" class="form-label">Estatus</label>
-                            <select class="form-select" id="estatus" name="estatus">
+                            <label for="estatus_modal" class="form-label">Estatus</label>
+                            <select class="form-select" id="estatus_modal" name="estatus">
                                 <option value="activo">Activo</option>
                                 <option value="inactivo">Inactivo</option>
                                 <option value="descontinuado">Descontinuado</option>

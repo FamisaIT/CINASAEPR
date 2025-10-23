@@ -2,14 +2,10 @@
 require_once __DIR__ . '/app/config/config.php';
 require_once __DIR__ . '/app/config/session.php';
 require_once __DIR__ . '/app/config/database.php';
-require_once __DIR__ . '/app/models/productos_model.php';
+require_once __DIR__ . '/app/models/pedidos_model.php';
 
-$pageTitle = 'Catálogo de Productos';
-$model = new ProductosModel($pdo);
-
-// Obtener datos para filtros
-$paises = $model->obtenerPaisesOrigen();
-$categorias = $model->obtenerCategorias();
+$pageTitle = 'Gestión de Pedidos';
+$model = new PedidosModel($pdo);
 
 include __DIR__ . '/app/views/header.php';
 ?>
@@ -27,35 +23,18 @@ include __DIR__ . '/app/views/header.php';
         <div class="col-md-4">
             <label for="buscar" class="form-label">Buscar</label>
             <div class="relative">
-                <input type="text" class="form-control pl-10" id="buscar" placeholder="Código, descripción o número de dibujo...">
+                <input type="text" class="form-control pl-10" id="buscar" placeholder="Número de pedido o cliente...">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <label for="estatus" class="form-label">Estatus</label>
             <select class="form-select" id="estatus">
                 <option value="">Todos</option>
-                <option value="activo" selected>Activo</option>
-                <option value="inactivo">Inactivo</option>
-                <option value="descontinuado">Descontinuado</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label for="pais_origen" class="form-label">País</label>
-            <select class="form-select" id="pais_origen">
-                <option value="">Todos</option>
-                <?php foreach ($paises as $pais): ?>
-                    <option value="<?php echo htmlspecialchars($pais); ?>"><?php echo htmlspecialchars($pais); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="categoria" class="form-label">Categoría</label>
-            <select class="form-select" id="categoria">
-                <option value="">Todas</option>
-                <?php foreach ($categorias as $cat): ?>
-                    <option value="<?php echo htmlspecialchars($cat); ?>"><?php echo htmlspecialchars($cat); ?></option>
-                <?php endforeach; ?>
+                <option value="creada">Creada</option>
+                <option value="en_produccion">En Producción</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
             </select>
         </div>
         <div class="col-md-1 d-flex align-items-end gap-2">
@@ -78,12 +57,12 @@ include __DIR__ . '/app/views/header.php';
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <span class="flex items-center">
-            <i class="fas fa-boxes mr-2"></i> Catálogo de Productos
+            <i class="fas fa-file-invoice mr-2"></i> Gestión de Pedidos
         </span>
         <div class="flex gap-2">
-            <button class="btn btn-primary btn-sm group" id="btnNuevoProducto">
+            <button class="btn btn-primary btn-sm group" id="btnNuevoPedido">
                 <i class="fas fa-plus transition-transform group-hover:rotate-90"></i>
-                <span class="ml-1">Nuevo Producto</span>
+                <span class="ml-1">Nuevo Pedido</span>
             </button>
         </div>
     </div>
@@ -92,18 +71,17 @@ include __DIR__ . '/app/views/header.php';
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th class="sortable" data-column="material_code">Código Material</th>
-                        <th>Descripción</th>
-                        <th>UM</th>
-                        <th class="sortable" data-column="drawing_number">Número Dibujo</th>
-                        <th>Categoría</th>
+                        <th class="sortable" data-column="numero_pedido">Número Pedido</th>
+                        <th class="sortable" data-column="razon_social">Cliente</th>
+                        <th class="sortable" data-column="fecha_creacion">Fecha Creación</th>
                         <th class="sortable" data-column="estatus">Estatus</th>
+                        <th>Contacto</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="tablaProductos">
+                <tbody id="tablaPedidos">
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="6" class="text-center">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Cargando...</span>
                             </div>
@@ -121,8 +99,6 @@ include __DIR__ . '/app/views/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/app/views/modal_producto.php'; ?>
-
     </main>
     <footer class="bg-gradient-to-r from-slate-100 via-blue-50 to-slate-100 text-center py-6 mt-8 shadow-inner">
         <div class="container">
@@ -130,13 +106,13 @@ include __DIR__ . '/app/views/header.php';
                 <img src="<?php echo BASE_PATH; ?>/app/assets/img/logo.png" alt="CINASA Logo" class="h-8 w-8">
                 <p class="text-slate-600 mb-0 font-medium">
                     <i class="fas fa-copyright text-blue-600"></i>
-                    <?php echo date('Y'); ?> Catálogo Maestro de Clientes - Sistema Empresarial
+                    <?php echo date('Y'); ?> Sistema de Gestión de Pedidos - CINASA
                 </p>
             </div>
         </div>
     </footer>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo BASE_PATH; ?>/app/assets/productos.js?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo BASE_PATH; ?>/app/assets/pedidos.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

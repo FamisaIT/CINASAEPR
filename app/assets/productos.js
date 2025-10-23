@@ -5,8 +5,11 @@
     let paginaActual = 1;
     let ordenActual = 'material_code';
     let direccionActual = 'ASC';
+    let opcionesEnCache = null;
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Cargar opciones una vez al iniciar
+        cargarOpcionesModalEnCache();
         cargarProductos();
 
         // Event listeners
@@ -120,7 +123,6 @@ function mostrarProductos(productos) {
             </td>
             <td>
                 <div class="text-truncate" style="max-width: 300px;" title="${escapeHtml(producto.descripcion || '')}">${escapeHtml(producto.descripcion || 'N/A')}</div>
-                ${producto.tipo_parte ? `<small class="text-muted">${escapeHtml(producto.tipo_parte)}</small>` : ''}
             </td>
             <td>${escapeHtml(producto.unidad_medida || 'N/A')}</td>
             <td>
@@ -224,10 +226,90 @@ function ordenarPor(columna) {
 
 function limpiarFiltros() {
     document.getElementById('buscar').value = '';
-    document.getElementById('estatus').value = '';
+    document.getElementById('estatus').value = 'activo';
     document.getElementById('pais_origen').value = '';
     document.getElementById('categoria').value = '';
     cargarProductos(1);
+}
+
+// Función para cargar opciones una sola vez al iniciar y guardarlas en caché
+function cargarOpcionesModalEnCache() {
+    return fetch(`${BASE_URL}/app/controllers/productos_opciones.php`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.paises && data.categorias) {
+                opcionesEnCache = data;
+                console.log('Opciones cargadas en caché:', opcionesEnCache);
+                return true;
+            } else {
+                console.warn('No se pudieron cargar opciones:', data);
+                return false;
+            }
+        })
+        .catch(error => {
+            console.error('Error cargando opciones:', error);
+            return false;
+        });
+}
+
+// Función para actualizar dinámicamente los filtros de país y categoría en la página principal
+function cargarOpcionesModal() {
+    // Usar datos en caché si están disponibles
+    if (!opcionesEnCache) {
+        console.warn('Opciones no están en caché, intentando cargar...');
+        return cargarOpcionesModalEnCache();
+    }
+
+    const data = opcionesEnCache;
+
+    // Actualizar el filtro de país para la página principal
+    const paisFiltro = document.getElementById('pais_origen');
+    if (paisFiltro && data.paises && data.paises.length > 0) {
+        const paisFiltroActual = paisFiltro.value;
+
+        while (paisFiltro.options.length > 1) {
+            paisFiltro.remove(1);
+        }
+
+        data.paises.forEach(pais => {
+            const option = document.createElement('option');
+            option.value = pais;
+            option.textContent = pais;
+            paisFiltro.appendChild(option);
+        });
+
+        if (paisFiltroActual) {
+            paisFiltro.value = paisFiltroActual;
+        }
+    }
+
+    // Actualizar el filtro de categoría para la página principal
+    const categoriaFiltro = document.getElementById('categoria');
+    if (categoriaFiltro && data.categorias && data.categorias.length > 0) {
+        const catFiltroActual = categoriaFiltro.value;
+
+        while (categoriaFiltro.options.length > 1) {
+            categoriaFiltro.remove(1);
+        }
+
+        data.categorias.forEach(categoria => {
+            const option = document.createElement('option');
+            option.value = categoria;
+            option.textContent = categoria;
+            categoriaFiltro.appendChild(option);
+        });
+
+        if (catFiltroActual) {
+            categoriaFiltro.value = catFiltroActual;
+        }
+    }
+
+    return Promise.resolve(true);
 }
 
 function abrirModalCrear() {
@@ -238,6 +320,10 @@ function abrirModalCrear() {
     document.getElementById('producto_id').value = '';
 
     ocultarErrores();
+
+    // Cargar opciones dinámicamente
+    cargarOpcionesModal();
+
     const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
     modal.show();
 }
@@ -251,53 +337,103 @@ function cerrarModal() {
 }
 
 function editarProducto(id) {
-    fetch(`${BASE_URL}/app/controllers/productos_detalle.php?id=${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const producto = data.data;
+    // Cargar las opciones dinámicamente
+    Promise.resolve(cargarOpcionesModal()).then(() => {
+        fetch(`${BASE_URL}/app/controllers/productos_detalle.php?id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const producto = data.data;
 
-                document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-edit mr-2"></i><span>Editar Producto</span>';
-                document.getElementById('btnGuardarTexto').textContent = 'Actualizar Producto';
-                
-                // Llenar el formulario
-                document.getElementById('producto_id').value = producto.id;
-                document.getElementById('material_code').value = producto.material_code || '';
-                document.getElementById('descripcion').value = producto.descripcion || '';
-                document.getElementById('unidad_medida').value = producto.unidad_medida || '';
-                document.getElementById('pais_origen').value = producto.pais_origen || '';
-                document.getElementById('hts_code').value = producto.hts_code || '';
-                document.getElementById('hts_descripcion').value = producto.hts_descripcion || '';
-                document.getElementById('tipo_parte').value = producto.tipo_parte || '';
-                document.getElementById('sistema_calidad').value = producto.sistema_calidad || '';
-                document.getElementById('categoria').value = producto.categoria || '';
-                document.getElementById('drawing_number').value = producto.drawing_number || '';
-                document.getElementById('drawing_version').value = producto.drawing_version || '';
-                document.getElementById('drawing_sheet').value = producto.drawing_sheet || '';
-                document.getElementById('ecm_number').value = producto.ecm_number || '';
-                document.getElementById('material_revision').value = producto.material_revision || '';
-                document.getElementById('change_number').value = producto.change_number || '';
-                document.getElementById('nivel_componente').value = producto.nivel_componente || '';
-                document.getElementById('componente_linea').value = producto.componente_linea || '';
-                document.getElementById('ref_documento').value = producto.ref_documento || '';
-                document.getElementById('peso').value = producto.peso || '';
-                document.getElementById('unidad_peso').value = producto.unidad_peso || '';
-                document.getElementById('material').value = producto.material || '';
-                document.getElementById('acabado').value = producto.acabado || '';
-                document.getElementById('notas').value = producto.notas || '';
-                document.getElementById('especificaciones').value = producto.especificaciones || '';
-                document.getElementById('estatus').value = producto.estatus || 'activo';
+                    document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-edit mr-2"></i><span>Editar Producto</span>';
+                    document.getElementById('btnGuardarTexto').textContent = 'Actualizar Producto';
 
-                const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
-                modal.show();
+                    // Llenar el formulario
+                    document.getElementById('producto_id').value = producto.id;
+                    document.getElementById('material_code').value = producto.material_code || '';
+                    document.getElementById('descripcion').value = producto.descripcion || '';
+
+                    // Selects - ahora las opciones ya están cargadas dinámicamente
+                    setSelectValue('unidad_medida', producto.unidad_medida);
+                    setSelectValue('pais_origen', producto.pais_origen);
+                    setSelectValue('sistema_calidad', producto.sistema_calidad);
+                    setSelectValue('categoria', producto.categoria);
+
+                    document.getElementById('precio_unitario').value = producto.precio_unitario || '';
+                    document.getElementById('hts_code').value = producto.hts_code || '';
+                    document.getElementById('hts_descripcion').value = producto.hts_descripcion || '';
+                    document.getElementById('tipo_parte').value = producto.tipo_parte || '';
+                    document.getElementById('drawing_number').value = producto.drawing_number || '';
+                    document.getElementById('drawing_version').value = producto.drawing_version || '';
+                    document.getElementById('drawing_sheet').value = producto.drawing_sheet || '';
+                    document.getElementById('ecm_number').value = producto.ecm_number || '';
+                    document.getElementById('material_revision').value = producto.material_revision || '';
+                    document.getElementById('change_number').value = producto.change_number || '';
+                    document.getElementById('nivel_componente').value = producto.nivel_componente || '';
+                    document.getElementById('componente_linea').value = producto.componente_linea || '';
+                    document.getElementById('ref_documento').value = producto.ref_documento || '';
+                    document.getElementById('peso').value = producto.peso || '';
+                    document.getElementById('unidad_peso').value = producto.unidad_peso || '';
+                    document.getElementById('material').value = producto.material || '';
+                    document.getElementById('acabado').value = producto.acabado || '';
+                    document.getElementById('notas').value = producto.notas || '';
+                    document.getElementById('especificaciones').value = producto.especificaciones || '';
+                    document.getElementById('estatus_modal').value = producto.estatus || 'activo';
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
+                    modal.show();
+                } else {
+                    mostrarError('Error al cargar producto: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarError('Error de conexión al cargar producto');
+            });
+    });
+}
+
+// Función auxiliar para establecer valores en campos del formulario
+function setSelectValue(fieldId, value) {
+    // Convertir el ID del filtro al ID del modal si es necesario
+    let modalFieldId = fieldId;
+    if (fieldId === 'unidad_medida') modalFieldId = 'unidad_medida_modal';
+    if (fieldId === 'pais_origen') modalFieldId = 'pais_origen_modal';
+    if (fieldId === 'sistema_calidad') modalFieldId = 'sistema_calidad_modal';
+    if (fieldId === 'categoria') modalFieldId = 'categoria_modal';
+    if (fieldId === 'estatus') modalFieldId = 'estatus_modal';
+
+    const field = document.getElementById(modalFieldId);
+    if (!field) return;
+
+    // Para campos de texto (input), simplemente asignar el valor
+    if (field.tagName === 'INPUT') {
+        field.value = value || '';
+    }
+    // Para selects, intentar establecer el valor
+    else if (field.tagName === 'SELECT') {
+        field.value = value || '';
+
+        // Si no se pudo establecer (porque no existe esa opción), intentar encontrar una coincidencia parcial
+        if (field.value !== value && value) {
+            const options = Array.from(field.options);
+            const match = options.find(opt =>
+                opt.value.toLowerCase().includes(value.toLowerCase()) ||
+                opt.text.toLowerCase().includes(value.toLowerCase())
+            );
+
+            if (match) {
+                field.value = match.value;
             } else {
-                mostrarError('Error al cargar producto: ' + data.message);
+                // Si definitivamente no existe, agregar una opción temporal con el valor de la BD
+                const newOption = document.createElement('option');
+                newOption.value = value;
+                newOption.textContent = value;
+                field.appendChild(newOption);
+                field.value = value;
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            mostrarError('Error de conexión al cargar producto');
-        });
+        }
+    }
 }
 
 function guardarProducto() {
@@ -509,14 +645,14 @@ function mostrarDetalleModal(producto) {
             .detail-item {
                 display: flex;
                 flex-direction: column;
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
+                margin-bottom: 2.5rem !important;
+                padding-bottom: 2rem !important;
                 border-bottom: 1px solid rgba(0,0,0,0.1);
             }
             .detail-item:last-child {
                 border-bottom: none;
-                margin-bottom: 0;
-                padding-bottom: 0;
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
             }
             .detail-label {
                 font-size: 0.85rem;
@@ -524,12 +660,13 @@ function mostrarDetalleModal(producto) {
                 color: #64748b;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                margin-bottom: 0.3rem;
+                margin-bottom: 0.8rem !important;
             }
             .detail-value {
                 font-size: 1rem;
                 color: #1e293b;
                 font-weight: 500;
+                line-height: 1.6 !important;
             }
         </style>
     `;

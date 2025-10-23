@@ -50,6 +50,7 @@ try {
         'unidad_peso' => $_POST['unidad_peso'] ?? null,
         'material' => $_POST['material'] ?? null,
         'acabado' => $_POST['acabado'] ?? null,
+        'precio_unitario' => !empty($_POST['precio_unitario']) ? floatval($_POST['precio_unitario']) : 0,
         'notas' => $_POST['notas'] ?? null,
         'especificaciones' => $_POST['especificaciones'] ?? null,
         'estatus' => $_POST['estatus'] ?? 'activo'

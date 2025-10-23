@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'Catálogo de Clientes'; ?></title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/app/assets/img/logo.png">
     <!-- Tailwind CDN - Solo para desarrollo, usar build para producción -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -45,10 +47,8 @@
             <div class="flex items-center justify-between px-4 py-3">
                 <!-- Logo/Brand -->
                 <a class="flex items-center space-x-3 text-white hover:text-blue-100 transition-all duration-300 group" href="<?php echo BASE_PATH; ?>/index.php">
-                    <div class="bg-white/10 p-2 rounded-lg group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                        <i class="fas fa-industry text-xl"></i>
-                    </div>
-                    <span class="font-bold text-lg tracking-tight">CINASA</span>
+                    <img src="<?php echo BASE_PATH; ?>/app/assets/img/logo.png" alt="CINASA Logo" class="h-16 w-16 group-hover:scale-110 transition-transform duration-300">
+                    <span class="font-bold text-2xl tracking-tight">CINASA</span>
                 </a>
                 
                 <!-- Mobile menu button -->
@@ -66,7 +66,15 @@
                         <i class="fas fa-boxes"></i>
                         <span>Productos</span>
                     </a>
-                    
+                    <a href="<?php echo BASE_PATH; ?>/pedidos.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Pedidos</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/produccion.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'produccion.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-industry"></i>
+                        <span>Producción</span>
+                    </a>
+
                     <!-- Separator -->
                     <div class="h-8 w-px bg-white/20 mx-2"></div>
                     
@@ -110,7 +118,11 @@
                         <i class="fas fa-boxes"></i>
                         <span>Productos</span>
                     </a>
-                    
+                    <a href="<?php echo BASE_PATH; ?>/pedidos.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Pedidos</span>
+                    </a>
+
                     <div class="border-t border-white/20 my-2"></div>
                     
                     <a href="#" class="mobile-nav-link">

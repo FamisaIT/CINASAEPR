@@ -6,6 +6,8 @@ $pageTitle = 'CINASA - Gestión de Clientes';
 require_once __DIR__ . '/app/views/header.php';
 ?>
 
+<!-- Logo de Fondo Transparente -->
+<div class="logo-background" style="position: fixed; top: 50%; left: 50%; width: 1200px; height: 1200px; margin-left: -600px; margin-top: -600px; background-image: url('<?php echo BASE_PATH; ?>/app/assets/img/logo.png'); background-size: 60%; background-repeat: no-repeat; background-position: center; background-attachment: fixed; opacity: 0.25; pointer-events: none; z-index: -1;"></div>
 
 <!-- Enhanced Filter Section -->
 <div class="filter-section">
