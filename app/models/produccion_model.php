@@ -263,5 +263,106 @@ class ProductionModel {
             ];
         }
     }
+
+    // ==================== MÉTODOS DE INTEGRACIÓN CON CALIDAD ====================
+
+    // Actualizar información de liberadas/rechazadas de una producción
+    public function actualizarEstadoCalidad($produccion_id) {
+        try {
+            // Obtener totales desde piezas_producidas
+            $sql = "SELECT
+                        COUNT(*) as total_piezas,
+                        SUM(CASE WHEN estatus = 'liberada' THEN 1 ELSE 0 END) as liberadas,
+                        SUM(CASE WHEN estatus = 'rechazada' THEN 1 ELSE 0 END) as rechazadas,
+                        SUM(CASE WHEN estatus IN ('por_inspeccionar', 'pendiente_reinspeccion') THEN 1 ELSE 0 END) as pendientes
+                    FROM piezas_producidas
+                    WHERE produccion_id = :produccion_id";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':produccion_id', $produccion_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch();
+
+            $liberadas = $resultado['liberadas'] ?? 0;
+            $rechazadas = $resultado['rechazadas'] ?? 0;
+            $pendientes = $resultado['pendientes'] ?? 0;
+            $total = $resultado['total_piezas'] ?? 0;
+
+            // Determinar estado de calidad
+            if ($total == 0) {
+                $estado_calidad = 'sin_inspeccionar';
+            } elseif ($pendientes > 0) {
+                if ($liberadas > 0 || $rechazadas > 0) {
+                    $estado_calidad = 'parcialmente_inspeccionada';
+                } else {
+                    $estado_calidad = 'inspeccionando';
+                }
+            } else {
+                if ($rechazadas > 0) {
+                    $estado_calidad = 'con_rechazos';
+                } else {
+                    $estado_calidad = 'completamente_inspeccionada';
+                }
+            }
+
+            // Actualizar producción
+            $sql_update = "UPDATE produccion SET
+                    prod_liberada = :liberadas,
+                    prod_rechazada = :rechazadas,
+                    qty_por_inspeccionar = :pendientes,
+                    estado_calidad = :estado_calidad,
+                    fecha_actualizacion = CURRENT_TIMESTAMP
+                    WHERE id = :produccion_id";
+
+            $stmt = $this->pdo->prepare($sql_update);
+            $stmt->bindValue(':liberadas', $liberadas);
+            $stmt->bindValue(':rechazadas', $rechazadas);
+            $stmt->bindValue(':pendientes', $pendientes);
+            $stmt->bindValue(':estado_calidad', $estado_calidad);
+            $stmt->bindValue(':produccion_id', $produccion_id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+
+        } catch (Exception $e) {
+            error_log('Error actualizando estado de calidad: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Obtener detalles de producción con estado de calidad
+    public function obtenerProduccionConCalidad($id) {
+        $sql = "SELECT p.*,
+                        ped.fecha_entrega,
+                        cr.porcentaje_aceptacion,
+                        cr.total_piezas_producidas,
+                        cr.total_piezas_inspeccionadas,
+                        cr.total_piezas_aceptadas,
+                        cr.total_piezas_rechazadas,
+                        (SELECT COUNT(*) FROM piezas_producidas WHERE produccion_id = p.id) as total_piezas,
+                        (SELECT COUNT(*) FROM piezas_producidas WHERE produccion_id = p.id AND estatus = 'liberada') as piezas_liberadas,
+                        (SELECT COUNT(*) FROM piezas_producidas WHERE produccion_id = p.id AND estatus = 'rechazada') as piezas_rechazadas,
+                        (SELECT COUNT(*) FROM piezas_producidas WHERE produccion_id = p.id AND estatus IN ('por_inspeccionar', 'pendiente_reinspeccion')) as piezas_pendientes
+                FROM produccion p
+                LEFT JOIN pedidos ped ON p.pedido_id = ped.id
+                LEFT JOIN calidad_resumen cr ON p.id = cr.produccion_id
+                WHERE p.id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    // Listar todas las piezas de una producción
+    public function obtenerPiezasDeProduccion($produccion_id) {
+        $sql = "SELECT pp.* FROM piezas_producidas pp
+                WHERE pp.produccion_id = :produccion_id
+                ORDER BY pp.folio_pieza";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':produccion_id', $produccion_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
 ?>

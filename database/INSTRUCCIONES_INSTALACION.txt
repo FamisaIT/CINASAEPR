@@ -1,0 +1,140 @@
+════════════════════════════════════════════════════════════════════════════════════════════
+                    INSTRUCCIONES DE INSTALACIÓN - MÓDULO DE CALIDAD
+════════════════════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANTE: Antes de acceder a calidad.php, DEBE ejecutar los scripts SQL
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                                OPCIÓN 1: phpMyAdmin
+════════════════════════════════════════════════════════════════════════════════════════════
+
+1. Abrir phpMyAdmin: http://localhost/phpmyadmin
+2. Seleccionar la base de datos: clientes_db
+3. Ir a la pestaña: SQL
+4. Copiar y ejecutar el contenido de cada archivo EN ORDEN:
+
+   PASO 1: database/calidad.sql
+   ────────────────────────────────
+   - Abre el archivo calidad.sql
+   - Copia TODO el contenido
+   - Pega en phpMyAdmin → SQL
+   - Haz clic en "Ejecutar"
+   - ✅ Verifica que se crearon 5 tablas
+
+   PASO 2: database/migracion_calidad.sql
+   ────────────────────────────────────────
+   - Abre el archivo migracion_calidad.sql
+   - Copia TODO el contenido
+   - Pega en phpMyAdmin → SQL
+   - Haz clic en "Ejecutar"
+
+   ⚠️  Si recibe error "Duplicate column name":
+       - Usar: database/migracion_calidad_alternativa.sql
+       - Descomentar solo las líneas ALTER TABLE necesarias
+
+   PASO 3: database/defectos_iniciales.sql
+   ────────────────────────────────────────
+   - Abre el archivo defectos_iniciales.sql
+   - Copia TODO el contenido
+   - Pega en phpMyAdmin → SQL
+   - Haz clic en "Ejecutar"
+   - ✅ Verifica que se insertaron 20 defectos
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                                OPCIÓN 2: Línea de Comandos
+════════════════════════════════════════════════════════════════════════════════════════════
+
+Abre terminal/cmd en el directorio del proyecto y ejecuta:
+
+Windows (CMD):
+──────────────
+cd C:\xampp2\htdocs\web\CINASA-main
+mysql -u root -p clientes_db < database/calidad.sql
+mysql -u root -p clientes_db < database/migracion_calidad.sql
+mysql -u root -p clientes_db < database/defectos_iniciales.sql
+
+(Presiona Enter cuando pida contraseña si no tienes una)
+
+Linux/Mac:
+──────────
+cd /ruta/a/CINASA-main
+mysql -u usuario -p clientes_db < database/calidad.sql
+mysql -u usuario -p clientes_db < database/migracion_calidad.sql
+mysql -u usuario -p clientes_db < database/defectos_iniciales.sql
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                            VERIFICACIÓN DESPUÉS DE INSTALAR
+════════════════════════════════════════════════════════════════════════════════════════════
+
+Ejecuta estas consultas en phpMyAdmin para verificar:
+
+1. Verificar que se crearon las tablas:
+   ────────────────────────────────────
+   SHOW TABLES LIKE 'calidad%';
+   SHOW TABLES LIKE 'piezas%';
+   SHOW TABLES LIKE 'defectos';
+
+   Debe retornar 5 tablas:
+   ✓ calidad_inspecciones
+   ✓ calidad_resumen
+   ✓ defectos
+   ✓ inspeccion_defectos
+   ✓ piezas_producidas
+
+2. Verificar que se agregaron columnas a produccion:
+   ─────────────────────────────────────────────────
+   DESCRIBE produccion;
+
+   Debe incluir estas columnas:
+   ✓ prod_liberada
+   ✓ prod_rechazada
+   ✓ estado_calidad
+   ✓ qty_por_inspeccionar
+
+3. Verificar defectos iniciales:
+   ─────────────────────────────
+   SELECT COUNT(*) FROM defectos;
+
+   Debe retornar: 20
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                                   SOLUCIÓN DE ERRORES
+════════════════════════════════════════════════════════════════════════════════════════════
+
+❌ Error: "Unknown column 'estado' in 'where clause'"
+✅ Solución: No ejecutaste calidad.sql. Ejecuta el PASO 1 arriba.
+
+❌ Error: "Duplicate column name 'prod_liberada'"
+✅ Solución: Los campos ya existen. Ignora el error o usa migracion_calidad_alternativa.sql
+
+❌ Error: "Table 'clientes_db.defectos' doesn't exist"
+✅ Solución: No ejecutaste calidad.sql. Ejecuta el PASO 1 arriba.
+
+❌ Error: "Access denied for user 'root'@'localhost'"
+✅ Solución: Usuario/contraseña incorrectos. Verifica credenciales en app/config/database.php
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                                   PRÓXIMOS PASOS
+════════════════════════════════════════════════════════════════════════════════════════════
+
+1. ✅ Ejecutar los 3 scripts SQL (este archivo)
+2. 🌐 Acceder a: http://localhost/CINASA-main/calidad.php
+3. 📋 Ver documentación: INICIO_RAPIDO_CALIDAD.md
+4. 🚀 Comenzar a usar el módulo
+
+════════════════════════════════════════════════════════════════════════════════════════════
+                                INFORMACIÓN IMPORTANTE
+════════════════════════════════════════════════════════════════════════════════════════════
+
+📌 Base de Datos: clientes_db
+📌 Usuario: root (o el que tengas configurado)
+📌 Tablas nuevas: 5
+📌 Campos nuevos en produccion: 4
+📌 Defectos iniciales: 20
+
+Si tienes dudas, consulta:
+- MODULO_CALIDAD_INSTALACION.md - Guía completa
+- INICIO_RAPIDO_CALIDAD.md - Guía rápida
+- ARQUITECTURA_MODULO_CALIDAD.txt - Diagramas técnicos
+
+════════════════════════════════════════════════════════════════════════════════════════════

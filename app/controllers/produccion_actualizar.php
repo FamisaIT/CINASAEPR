@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/produccion_model.php';
+require_once __DIR__ . '/../models/calidad_model.php';
 
 header('Content-Type: application/json');
 
@@ -13,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 try {
     $model = new ProductionModel($pdo);
+    $calidadModel = new CalidadModel($pdo);
 
     $id = $_POST['id'] ?? null;
     $cantidadHoy = $_POST['cantidad_hoy'] ?? null;
@@ -75,6 +77,21 @@ try {
 
     // Luego actualizar la producción (prod_total se recalcula a partir del histórico)
     $model->actualizarProduccionHoy($id, $cantidadHoy);
+
+    // Generar piezas individuales si se ha producido cantidad > 0
+    if ($cantidadHoy > 0) {
+        try {
+            // Redondear cantidad para crear piezas enteras
+            $cantidadPiezas = max(1, round($cantidadHoy));
+            $piezasCreadas = $calidadModel->crearPiezasProducidas($id, $cantidadPiezas);
+            error_log("Se crearon " . count($piezasCreadas) . " piezas para producción ID: " . $id . " (cantidad producida: " . $cantidadHoy . ")");
+        } catch (Exception $e) {
+            error_log("Error creando piezas: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            // No interrumpir el flujo si hay error en piezas
+            // NOTA: Las piezas no se crearon pero la producción sí se registró
+        }
+    }
 
     // Obtener el registro actualizado
     $registroActualizado = $model->obtenerProduccionPorId($id);

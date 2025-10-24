@@ -74,6 +74,14 @@
                         <i class="fas fa-industry"></i>
                         <span>Producción</span>
                     </a>
+                    <a href="<?php echo BASE_PATH; ?>/calidad.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'calidad.php' || basename($_SERVER['PHP_SELF']) == 'calidad_pedido.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Calidad</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/tracking_piezas.php" class="nav-link-custom <?php echo (basename($_SERVER['PHP_SELF']) == 'tracking_piezas.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-route"></i>
+                        <span>Tracking</span>
+                    </a>
 
                     <!-- Separator -->
                     <div class="h-8 w-px bg-white/20 mx-2"></div>
@@ -121,6 +129,18 @@
                     <a href="<?php echo BASE_PATH; ?>/pedidos.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'pedidos.php') ? 'active' : ''; ?>">
                         <i class="fas fa-file-invoice"></i>
                         <span>Pedidos</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/produccion.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'produccion.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-industry"></i>
+                        <span>Producción</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/calidad.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'calidad.php' || basename($_SERVER['PHP_SELF']) == 'calidad_pedido.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Calidad</span>
+                    </a>
+                    <a href="<?php echo BASE_PATH; ?>/tracking_piezas.php" class="mobile-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'tracking_piezas.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-route"></i>
+                        <span>Tracking</span>
                     </a>
 
                     <div class="border-t border-white/20 my-2"></div>
